@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" id="city-input" placeholder="Enter city name" spellcheck="false">
+            <button id="search-btn"><img src="images/search.png" alt="Search"></button>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" alt="Weather Icon" class="weather-icon">
+            <h1 class="temp">24°C</h1>
+            <h2 class="city">Mysore</h2>
+            <div class="detail">
+                <div class="col">
+                    <img src="images/humidity.png" alt="Humidity">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <img src="images/wind.png" alt="Wind Speed">
+                    <div>
+                        <p class="wind">20 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const apikey = "876c2a9c1570ecef42c0ea8b5c417936";
+        const apiurl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const city = document.getElementById('city-input').value;
+            if (city) {
+                checkWeather(city);
+            } else {
+                alert('Please enter a city name');
+            }
+        });
+
+        async function checkWeather(city) {
+            try {
+                const response = await fetch(apiurl + city + `&appid=${apikey}`);
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+                const data = await response.json();
+                console.log(data);
+                displayWeather(data);
+            } catch (error) {
+                console.error('Error fetching the weather data:', error);
+                alert('Error fetching the weather data: ' + error.message);
+            }
+        }
+
+        function displayWeather(data) {
+            document.querySelector('.weather-icon').src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+            document.querySelector('.temp').textContent = `${data.main.temp}°C`;
+            document.querySelector('.city').textContent = data.name;
+            document.querySelector('.humidity').textContent = `${data.main.humidity}%`;
+            document.querySelector('.wind').textContent = `${data.wind.speed} km/h`;
+        }
+    </script>
+</body>
+</html>
